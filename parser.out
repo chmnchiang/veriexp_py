@@ -1,0 +1,275 @@
+Created by PLY version 3.8 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    DIGITS
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> func_decl
+Rule 2     func_decl -> type ident ( func_args ) block
+Rule 3     type -> IDENT
+Rule 4     ident -> IDENT
+Rule 5     func_args -> <empty>
+Rule 6     func_args -> func_arg_decl
+Rule 7     func_args -> func_args , func_arg_decl
+Rule 8     func_arg_decl -> type ident
+Rule 9     block -> { statements }
+Rule 10    statements -> <empty>
+Rule 11    statements -> statement
+Rule 12    statements -> statements statement
+Rule 13    statement -> RETURN ident ;
+Rule 14    return -> RETURN
+
+Terminals, with rules where they appear
+
+(                    : 2
+)                    : 2
+,                    : 7
+;                    : 13
+DIGITS               : 
+IDENT                : 3 4
+RETURN               : 13 14
+error                : 
+{                    : 9
+}                    : 9
+
+Nonterminals, with rules where they appear
+
+block                : 2
+func_arg_decl        : 6 7
+func_args            : 2 7
+func_decl            : 1
+ident                : 2 8 13
+program              : 0
+return               : 
+statement            : 11 12
+statements           : 9 12
+type                 : 2 8
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . func_decl
+    (2) func_decl -> . type ident ( func_args ) block
+    (3) type -> . IDENT
+
+    IDENT           shift and go to state 4
+
+    func_decl                      shift and go to state 1
+    type                           shift and go to state 2
+    program                        shift and go to state 3
+
+state 1
+
+    (1) program -> func_decl .
+
+    $end            reduce using rule 1 (program -> func_decl .)
+
+
+state 2
+
+    (2) func_decl -> type . ident ( func_args ) block
+    (4) ident -> . IDENT
+
+    IDENT           shift and go to state 6
+
+    ident                          shift and go to state 5
+
+state 3
+
+    (0) S' -> program .
+
+
+
+state 4
+
+    (3) type -> IDENT .
+
+    IDENT           reduce using rule 3 (type -> IDENT .)
+
+
+state 5
+
+    (2) func_decl -> type ident . ( func_args ) block
+
+    (               shift and go to state 7
+
+
+state 6
+
+    (4) ident -> IDENT .
+
+    ;               reduce using rule 4 (ident -> IDENT .)
+    (               reduce using rule 4 (ident -> IDENT .)
+    )               reduce using rule 4 (ident -> IDENT .)
+    ,               reduce using rule 4 (ident -> IDENT .)
+
+
+state 7
+
+    (2) func_decl -> type ident ( . func_args ) block
+    (5) func_args -> .
+    (6) func_args -> . func_arg_decl
+    (7) func_args -> . func_args , func_arg_decl
+    (8) func_arg_decl -> . type ident
+    (3) type -> . IDENT
+
+    )               reduce using rule 5 (func_args -> .)
+    ,               reduce using rule 5 (func_args -> .)
+    IDENT           shift and go to state 4
+
+    func_args                      shift and go to state 9
+    type                           shift and go to state 8
+    func_arg_decl                  shift and go to state 10
+
+state 8
+
+    (8) func_arg_decl -> type . ident
+    (4) ident -> . IDENT
+
+    IDENT           shift and go to state 6
+
+    ident                          shift and go to state 11
+
+state 9
+
+    (2) func_decl -> type ident ( func_args . ) block
+    (7) func_args -> func_args . , func_arg_decl
+
+    )               shift and go to state 13
+    ,               shift and go to state 12
+
+
+state 10
+
+    (6) func_args -> func_arg_decl .
+
+    )               reduce using rule 6 (func_args -> func_arg_decl .)
+    ,               reduce using rule 6 (func_args -> func_arg_decl .)
+
+
+state 11
+
+    (8) func_arg_decl -> type ident .
+
+    )               reduce using rule 8 (func_arg_decl -> type ident .)
+    ,               reduce using rule 8 (func_arg_decl -> type ident .)
+
+
+state 12
+
+    (7) func_args -> func_args , . func_arg_decl
+    (8) func_arg_decl -> . type ident
+    (3) type -> . IDENT
+
+    IDENT           shift and go to state 4
+
+    func_arg_decl                  shift and go to state 14
+    type                           shift and go to state 8
+
+state 13
+
+    (2) func_decl -> type ident ( func_args ) . block
+    (9) block -> . { statements }
+
+    {               shift and go to state 16
+
+    block                          shift and go to state 15
+
+state 14
+
+    (7) func_args -> func_args , func_arg_decl .
+
+    )               reduce using rule 7 (func_args -> func_args , func_arg_decl .)
+    ,               reduce using rule 7 (func_args -> func_args , func_arg_decl .)
+
+
+state 15
+
+    (2) func_decl -> type ident ( func_args ) block .
+
+    $end            reduce using rule 2 (func_decl -> type ident ( func_args ) block .)
+
+
+state 16
+
+    (9) block -> { . statements }
+    (10) statements -> .
+    (11) statements -> . statement
+    (12) statements -> . statements statement
+    (13) statement -> . RETURN ident ;
+
+  ! shift/reduce conflict for RETURN resolved as shift
+    }               reduce using rule 10 (statements -> .)
+    RETURN          shift and go to state 17
+
+  ! RETURN          [ reduce using rule 10 (statements -> .) ]
+
+    statements                     shift and go to state 19
+    statement                      shift and go to state 18
+
+state 17
+
+    (13) statement -> RETURN . ident ;
+    (4) ident -> . IDENT
+
+    IDENT           shift and go to state 6
+
+    ident                          shift and go to state 20
+
+state 18
+
+    (11) statements -> statement .
+
+    }               reduce using rule 11 (statements -> statement .)
+    RETURN          reduce using rule 11 (statements -> statement .)
+
+
+state 19
+
+    (9) block -> { statements . }
+    (12) statements -> statements . statement
+    (13) statement -> . RETURN ident ;
+
+    }               shift and go to state 22
+    RETURN          shift and go to state 17
+
+    statement                      shift and go to state 21
+
+state 20
+
+    (13) statement -> RETURN ident . ;
+
+    ;               shift and go to state 23
+
+
+state 21
+
+    (12) statements -> statements statement .
+
+    }               reduce using rule 12 (statements -> statements statement .)
+    RETURN          reduce using rule 12 (statements -> statements statement .)
+
+
+state 22
+
+    (9) block -> { statements } .
+
+    $end            reduce using rule 9 (block -> { statements } .)
+
+
+state 23
+
+    (13) statement -> RETURN ident ; .
+
+    }               reduce using rule 13 (statement -> RETURN ident ; .)
+    RETURN          reduce using rule 13 (statement -> RETURN ident ; .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for RETURN in state 16 resolved as shift
