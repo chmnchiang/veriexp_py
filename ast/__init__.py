@@ -1,8 +1,12 @@
 from .expression.type import Type
 from .expression.identifier import Identifier
+from .expression.binary_op import BinaryOP
+from .expression.constant import Constant
+from .statement.declaration import Declaration
 from .statement.funcarg_declaration import FuncArgDeclaration
 from .statement.function_declaration import FunctionDeclaration
 from .statement.return_statement import ReturnStatement
 from .statement.block import Block
-
-
+from .statement.if_statement import IfStatement
+from .statement.while_statement import WhileStatement
+from .statement.assignment import Assignment

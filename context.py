@@ -12,8 +12,8 @@ class Context:
         self.states = []
         self.idle_state = None
         self.start_state = None
-        self.state_var = None
-        self.result_var = None
+
+        self.special_var = {}
 
         self.stack = []
 
@@ -78,7 +78,7 @@ class Context:
         assert isinstance(next_state, Variable)
         
         self.module.state_desc[state].append(
-            StoreReg(self.state_var, next_state)
+            StoreReg(self.ident_map['state'], next_state)
         )
 
     def A(self, statement):
@@ -93,12 +93,12 @@ class Context:
 
     @property
     def next_state(self):
-        return self.stack[-1][0]
+        return self.stack[-1][1]
 
     def push_state(self, p, f):
         self.stack.append((p, f))
 
-    def pop_state(self, p, f):
+    def pop_state(self):
         return self.stack.pop()
 
 

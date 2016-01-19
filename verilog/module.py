@@ -20,21 +20,22 @@ class Module(Node, Named):
             else:
                 yield ', '
             yield from v.code_gen(context)
-        yield ')\n'
+        yield ');\n'
         for v in self.vars:
             yield from v.generate_declaration(context)
 
 
         # always block
         yield 'always @(posedge clk) begin\n'
-        yield 'case('
-        yield from context.state_var.code_gen(context)
-        yield ')\n'
+        yield 'if (reset) state <= 0; else begin\n'
+        yield 'case(state)\n'
         for st, ls in self.state_desc.items():
+            if context.get_statenum(st) != st:
+                continue
             yield '{}: begin\n'.format(st)
             for statement in ls:
                 yield from statement.code_gen(context)
             yield 'end\n'
         yield 'endcase\n'
-        yield 'end\n'
+        yield 'end\nend\n'
         yield 'endmodule\n'

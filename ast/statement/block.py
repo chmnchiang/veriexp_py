@@ -12,7 +12,7 @@ class Block(Statement):
             out_s = context.new_state()
             context.push_state(in_s, out_s)
             stmt.generate(context)
-            context.pop_state(in_s, out_s)
+            context.pop_state()
 
             in_s = out_s
 

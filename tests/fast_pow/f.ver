@@ -1,0 +1,12 @@
+int f(int a, int b) {
+    int temp;
+    temp = 1;
+    while (b) {
+        if (b & 1) {
+            temp = temp * a;
+        }
+        b = b >> 1;
+        a = a * a;
+    }
+    return temp;
+}

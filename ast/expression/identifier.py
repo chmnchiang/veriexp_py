@@ -6,3 +6,6 @@ class Identifier(Expression):
 
     def __str__(self):
         return self.name
+
+    def generate(self, context):
+        return context.ident_map[self.name]

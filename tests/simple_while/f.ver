@@ -1,0 +1,13 @@
+int f(int a, int b) {
+    int t;
+    int res;
+    t = b;
+    res = 0;
+
+    while (t != 0) {
+        res = res + a;
+        t = t - 1;
+    }
+
+    return res;
+}

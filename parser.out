@@ -1,9 +1,5 @@
 Created by PLY version 3.8 (http://www.dabeaz.com/ply)
 
-Unused terminals:
-
-    DIGITS
-
 Grammar
 
 Rule 0     S' -> program
@@ -19,34 +15,69 @@ Rule 9     block -> { statements }
 Rule 10    statements -> <empty>
 Rule 11    statements -> statement
 Rule 12    statements -> statements statement
-Rule 13    statement -> RETURN ident ;
-Rule 14    return -> RETURN
+Rule 13    statement -> type ident ;
+Rule 14    statement -> ident = expression ;
+Rule 15    statement -> IF ( expression ) block
+Rule 16    statement -> WHILE ( expression ) block
+Rule 17    statement -> RETURN expression ;
+Rule 18    expression -> ident
+Rule 19    expression -> constant
+Rule 20    constant -> DIGITS
+Rule 21    expression -> expression + expression
+Rule 22    expression -> expression - expression
+Rule 23    expression -> expression * expression
+Rule 24    expression -> expression / expression
+Rule 25    expression -> expression < expression
+Rule 26    expression -> expression > expression
+Rule 27    expression -> expression & expression
+Rule 28    expression -> expression | expression
+Rule 29    expression -> expression EQUAL expression
+Rule 30    expression -> expression NOTEQUAL expression
+Rule 31    expression -> expression LEFTSHIFT expression
+Rule 32    expression -> expression RIGHTSHIFT expression
+Rule 33    expression -> ( expression )
 
 Terminals, with rules where they appear
 
-(                    : 2
-)                    : 2
+&                    : 27
+(                    : 2 15 16 33
+)                    : 2 15 16 33
+*                    : 23
++                    : 21
 ,                    : 7
-;                    : 13
-DIGITS               : 
+-                    : 22
+/                    : 24
+;                    : 13 14 17
+<                    : 25
+=                    : 14
+>                    : 26
+DIGITS               : 20
+EQUAL                : 29
 IDENT                : 3 4
-RETURN               : 13 14
+IF                   : 15
+LEFTSHIFT            : 31
+NOTEQUAL             : 30
+RETURN               : 17
+RIGHTSHIFT           : 32
+WHILE                : 16
 error                : 
 {                    : 9
+|                    : 28
 }                    : 9
 
 Nonterminals, with rules where they appear
 
-block                : 2
+block                : 2 15 16
+constant             : 19
+expression           : 14 15 16 17 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 30 30 31 31 32 32 33
 func_arg_decl        : 6 7
 func_args            : 2 7
 func_decl            : 1
-ident                : 2 8 13
+ident                : 2 8 13 14 18
 program              : 0
-return               : 
 statement            : 11 12
 statements           : 9 12
-type                 : 2 8
+type                 : 2 8 13
 
 Parsing method: LALR
 
@@ -57,20 +88,33 @@ state 0
     (2) func_decl -> . type ident ( func_args ) block
     (3) type -> . IDENT
 
-    IDENT           shift and go to state 4
+    IDENT           shift and go to state 3
 
-    func_decl                      shift and go to state 1
-    type                           shift and go to state 2
-    program                        shift and go to state 3
+    program                        shift and go to state 1
+    func_decl                      shift and go to state 2
+    type                           shift and go to state 4
 
 state 1
+
+    (0) S' -> program .
+
+
+
+state 2
 
     (1) program -> func_decl .
 
     $end            reduce using rule 1 (program -> func_decl .)
 
 
-state 2
+state 3
+
+    (3) type -> IDENT .
+
+    IDENT           reduce using rule 3 (type -> IDENT .)
+
+
+state 4
 
     (2) func_decl -> type . ident ( func_args ) block
     (4) ident -> . IDENT
@@ -78,19 +122,6 @@ state 2
     IDENT           shift and go to state 6
 
     ident                          shift and go to state 5
-
-state 3
-
-    (0) S' -> program .
-
-
-
-state 4
-
-    (3) type -> IDENT .
-
-    IDENT           reduce using rule 3 (type -> IDENT .)
-
 
 state 5
 
@@ -103,10 +134,22 @@ state 6
 
     (4) ident -> IDENT .
 
+    +               reduce using rule 4 (ident -> IDENT .)
+    -               reduce using rule 4 (ident -> IDENT .)
+    *               reduce using rule 4 (ident -> IDENT .)
+    /               reduce using rule 4 (ident -> IDENT .)
+    <               reduce using rule 4 (ident -> IDENT .)
+    >               reduce using rule 4 (ident -> IDENT .)
+    &               reduce using rule 4 (ident -> IDENT .)
+    |               reduce using rule 4 (ident -> IDENT .)
+    EQUAL           reduce using rule 4 (ident -> IDENT .)
+    NOTEQUAL        reduce using rule 4 (ident -> IDENT .)
+    LEFTSHIFT       reduce using rule 4 (ident -> IDENT .)
+    RIGHTSHIFT      reduce using rule 4 (ident -> IDENT .)
     ;               reduce using rule 4 (ident -> IDENT .)
-    (               reduce using rule 4 (ident -> IDENT .)
     )               reduce using rule 4 (ident -> IDENT .)
     ,               reduce using rule 4 (ident -> IDENT .)
+    (               reduce using rule 4 (ident -> IDENT .)
 
 
 state 7
@@ -120,11 +163,11 @@ state 7
 
     )               reduce using rule 5 (func_args -> .)
     ,               reduce using rule 5 (func_args -> .)
-    IDENT           shift and go to state 4
+    IDENT           shift and go to state 3
 
-    func_args                      shift and go to state 9
-    type                           shift and go to state 8
     func_arg_decl                  shift and go to state 10
+    type                           shift and go to state 8
+    func_args                      shift and go to state 9
 
 state 8
 
@@ -166,19 +209,19 @@ state 12
     (8) func_arg_decl -> . type ident
     (3) type -> . IDENT
 
-    IDENT           shift and go to state 4
+    IDENT           shift and go to state 3
 
-    func_arg_decl                  shift and go to state 14
     type                           shift and go to state 8
+    func_arg_decl                  shift and go to state 14
 
 state 13
 
     (2) func_decl -> type ident ( func_args ) . block
     (9) block -> . { statements }
 
-    {               shift and go to state 16
+    {               shift and go to state 15
 
-    block                          shift and go to state 15
+    block                          shift and go to state 16
 
 state 14
 
@@ -190,86 +233,1491 @@ state 14
 
 state 15
 
+    (9) block -> { . statements }
+    (10) statements -> .
+    (11) statements -> . statement
+    (12) statements -> . statements statement
+    (13) statement -> . type ident ;
+    (14) statement -> . ident = expression ;
+    (15) statement -> . IF ( expression ) block
+    (16) statement -> . WHILE ( expression ) block
+    (17) statement -> . RETURN expression ;
+    (3) type -> . IDENT
+    (4) ident -> . IDENT
+
+  ! shift/reduce conflict for IF resolved as shift
+  ! shift/reduce conflict for WHILE resolved as shift
+  ! shift/reduce conflict for RETURN resolved as shift
+  ! shift/reduce conflict for IDENT resolved as shift
+    }               reduce using rule 10 (statements -> .)
+    IF              shift and go to state 22
+    WHILE           shift and go to state 21
+    RETURN          shift and go to state 17
+    IDENT           shift and go to state 24
+
+  ! IF              [ reduce using rule 10 (statements -> .) ]
+  ! WHILE           [ reduce using rule 10 (statements -> .) ]
+  ! RETURN          [ reduce using rule 10 (statements -> .) ]
+  ! IDENT           [ reduce using rule 10 (statements -> .) ]
+
+    statements                     shift and go to state 18
+    ident                          shift and go to state 23
+    statement                      shift and go to state 19
+    type                           shift and go to state 20
+
+state 16
+
     (2) func_decl -> type ident ( func_args ) block .
 
     $end            reduce using rule 2 (func_decl -> type ident ( func_args ) block .)
 
 
-state 16
-
-    (9) block -> { . statements }
-    (10) statements -> .
-    (11) statements -> . statement
-    (12) statements -> . statements statement
-    (13) statement -> . RETURN ident ;
-
-  ! shift/reduce conflict for RETURN resolved as shift
-    }               reduce using rule 10 (statements -> .)
-    RETURN          shift and go to state 17
-
-  ! RETURN          [ reduce using rule 10 (statements -> .) ]
-
-    statements                     shift and go to state 19
-    statement                      shift and go to state 18
-
 state 17
 
-    (13) statement -> RETURN . ident ;
+    (17) statement -> RETURN . expression ;
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
     (4) ident -> . IDENT
+    (20) constant -> . DIGITS
 
+    (               shift and go to state 26
     IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
 
-    ident                          shift and go to state 20
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 29
 
 state 18
+
+    (9) block -> { statements . }
+    (12) statements -> statements . statement
+    (13) statement -> . type ident ;
+    (14) statement -> . ident = expression ;
+    (15) statement -> . IF ( expression ) block
+    (16) statement -> . WHILE ( expression ) block
+    (17) statement -> . RETURN expression ;
+    (3) type -> . IDENT
+    (4) ident -> . IDENT
+
+    }               shift and go to state 31
+    IF              shift and go to state 22
+    WHILE           shift and go to state 21
+    RETURN          shift and go to state 17
+    IDENT           shift and go to state 24
+
+    ident                          shift and go to state 23
+    statement                      shift and go to state 30
+    type                           shift and go to state 20
+
+state 19
 
     (11) statements -> statement .
 
     }               reduce using rule 11 (statements -> statement .)
+    IF              reduce using rule 11 (statements -> statement .)
+    WHILE           reduce using rule 11 (statements -> statement .)
     RETURN          reduce using rule 11 (statements -> statement .)
+    IDENT           reduce using rule 11 (statements -> statement .)
 
-
-state 19
-
-    (9) block -> { statements . }
-    (12) statements -> statements . statement
-    (13) statement -> . RETURN ident ;
-
-    }               shift and go to state 22
-    RETURN          shift and go to state 17
-
-    statement                      shift and go to state 21
 
 state 20
 
-    (13) statement -> RETURN ident . ;
+    (13) statement -> type . ident ;
+    (4) ident -> . IDENT
 
-    ;               shift and go to state 23
+    IDENT           shift and go to state 6
 
+    ident                          shift and go to state 32
 
 state 21
 
-    (12) statements -> statements statement .
+    (16) statement -> WHILE . ( expression ) block
 
-    }               reduce using rule 12 (statements -> statements statement .)
-    RETURN          reduce using rule 12 (statements -> statements statement .)
+    (               shift and go to state 33
 
 
 state 22
 
-    (9) block -> { statements } .
+    (15) statement -> IF . ( expression ) block
 
-    $end            reduce using rule 9 (block -> { statements } .)
+    (               shift and go to state 34
 
 
 state 23
 
-    (13) statement -> RETURN ident ; .
+    (14) statement -> ident . = expression ;
 
-    }               reduce using rule 13 (statement -> RETURN ident ; .)
-    RETURN          reduce using rule 13 (statement -> RETURN ident ; .)
+    =               shift and go to state 35
+
+
+state 24
+
+    (3) type -> IDENT .
+    (4) ident -> IDENT .
+
+    IDENT           reduce using rule 3 (type -> IDENT .)
+    =               reduce using rule 4 (ident -> IDENT .)
+
+
+state 25
+
+    (20) constant -> DIGITS .
+
+    )               reduce using rule 20 (constant -> DIGITS .)
+    +               reduce using rule 20 (constant -> DIGITS .)
+    -               reduce using rule 20 (constant -> DIGITS .)
+    *               reduce using rule 20 (constant -> DIGITS .)
+    /               reduce using rule 20 (constant -> DIGITS .)
+    <               reduce using rule 20 (constant -> DIGITS .)
+    >               reduce using rule 20 (constant -> DIGITS .)
+    &               reduce using rule 20 (constant -> DIGITS .)
+    |               reduce using rule 20 (constant -> DIGITS .)
+    EQUAL           reduce using rule 20 (constant -> DIGITS .)
+    NOTEQUAL        reduce using rule 20 (constant -> DIGITS .)
+    LEFTSHIFT       reduce using rule 20 (constant -> DIGITS .)
+    RIGHTSHIFT      reduce using rule 20 (constant -> DIGITS .)
+    ;               reduce using rule 20 (constant -> DIGITS .)
+
+
+state 26
+
+    (33) expression -> ( . expression )
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 36
+
+state 27
+
+    (18) expression -> ident .
+
+    ;               reduce using rule 18 (expression -> ident .)
+    +               reduce using rule 18 (expression -> ident .)
+    -               reduce using rule 18 (expression -> ident .)
+    *               reduce using rule 18 (expression -> ident .)
+    /               reduce using rule 18 (expression -> ident .)
+    <               reduce using rule 18 (expression -> ident .)
+    >               reduce using rule 18 (expression -> ident .)
+    &               reduce using rule 18 (expression -> ident .)
+    |               reduce using rule 18 (expression -> ident .)
+    EQUAL           reduce using rule 18 (expression -> ident .)
+    NOTEQUAL        reduce using rule 18 (expression -> ident .)
+    LEFTSHIFT       reduce using rule 18 (expression -> ident .)
+    RIGHTSHIFT      reduce using rule 18 (expression -> ident .)
+    )               reduce using rule 18 (expression -> ident .)
+
+
+state 28
+
+    (19) expression -> constant .
+
+    ;               reduce using rule 19 (expression -> constant .)
+    +               reduce using rule 19 (expression -> constant .)
+    -               reduce using rule 19 (expression -> constant .)
+    *               reduce using rule 19 (expression -> constant .)
+    /               reduce using rule 19 (expression -> constant .)
+    <               reduce using rule 19 (expression -> constant .)
+    >               reduce using rule 19 (expression -> constant .)
+    &               reduce using rule 19 (expression -> constant .)
+    |               reduce using rule 19 (expression -> constant .)
+    EQUAL           reduce using rule 19 (expression -> constant .)
+    NOTEQUAL        reduce using rule 19 (expression -> constant .)
+    LEFTSHIFT       reduce using rule 19 (expression -> constant .)
+    RIGHTSHIFT      reduce using rule 19 (expression -> constant .)
+    )               reduce using rule 19 (expression -> constant .)
+
+
+state 29
+
+    (17) statement -> RETURN expression . ;
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               shift and go to state 46
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+    <               shift and go to state 38
+    >               shift and go to state 43
+    &               shift and go to state 47
+    |               shift and go to state 39
+    EQUAL           shift and go to state 45
+    NOTEQUAL        shift and go to state 48
+    LEFTSHIFT       shift and go to state 40
+    RIGHTSHIFT      shift and go to state 41
+
+
+state 30
+
+    (12) statements -> statements statement .
+
+    }               reduce using rule 12 (statements -> statements statement .)
+    IF              reduce using rule 12 (statements -> statements statement .)
+    WHILE           reduce using rule 12 (statements -> statements statement .)
+    RETURN          reduce using rule 12 (statements -> statements statement .)
+    IDENT           reduce using rule 12 (statements -> statements statement .)
+
+
+state 31
+
+    (9) block -> { statements } .
+
+    }               reduce using rule 9 (block -> { statements } .)
+    IF              reduce using rule 9 (block -> { statements } .)
+    WHILE           reduce using rule 9 (block -> { statements } .)
+    RETURN          reduce using rule 9 (block -> { statements } .)
+    IDENT           reduce using rule 9 (block -> { statements } .)
+    $end            reduce using rule 9 (block -> { statements } .)
+
+
+state 32
+
+    (13) statement -> type ident . ;
+
+    ;               shift and go to state 50
+
+
+state 33
+
+    (16) statement -> WHILE ( . expression ) block
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 51
+
+state 34
+
+    (15) statement -> IF ( . expression ) block
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 52
+
+state 35
+
+    (14) statement -> ident = . expression ;
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    expression                     shift and go to state 53
+    ident                          shift and go to state 27
+
+state 36
+
+    (33) expression -> ( expression . )
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    )               shift and go to state 54
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+    <               shift and go to state 38
+    >               shift and go to state 43
+    &               shift and go to state 47
+    |               shift and go to state 39
+    EQUAL           shift and go to state 45
+    NOTEQUAL        shift and go to state 48
+    LEFTSHIFT       shift and go to state 40
+    RIGHTSHIFT      shift and go to state 41
+
+
+state 37
+
+    (23) expression -> expression * . expression
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 55
+
+state 38
+
+    (25) expression -> expression < . expression
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 56
+
+state 39
+
+    (28) expression -> expression | . expression
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 57
+
+state 40
+
+    (31) expression -> expression LEFTSHIFT . expression
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 58
+
+state 41
+
+    (32) expression -> expression RIGHTSHIFT . expression
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 59
+
+state 42
+
+    (22) expression -> expression - . expression
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 60
+
+state 43
+
+    (26) expression -> expression > . expression
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 61
+
+state 44
+
+    (24) expression -> expression / . expression
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 62
+
+state 45
+
+    (29) expression -> expression EQUAL . expression
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 63
+
+state 46
+
+    (17) statement -> RETURN expression ; .
+
+    }               reduce using rule 17 (statement -> RETURN expression ; .)
+    IF              reduce using rule 17 (statement -> RETURN expression ; .)
+    WHILE           reduce using rule 17 (statement -> RETURN expression ; .)
+    RETURN          reduce using rule 17 (statement -> RETURN expression ; .)
+    IDENT           reduce using rule 17 (statement -> RETURN expression ; .)
+
+
+state 47
+
+    (27) expression -> expression & . expression
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 64
+
+state 48
+
+    (30) expression -> expression NOTEQUAL . expression
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 65
+
+state 49
+
+    (21) expression -> expression + . expression
+    (18) expression -> . ident
+    (19) expression -> . constant
+    (21) expression -> . expression + expression
+    (22) expression -> . expression - expression
+    (23) expression -> . expression * expression
+    (24) expression -> . expression / expression
+    (25) expression -> . expression < expression
+    (26) expression -> . expression > expression
+    (27) expression -> . expression & expression
+    (28) expression -> . expression | expression
+    (29) expression -> . expression EQUAL expression
+    (30) expression -> . expression NOTEQUAL expression
+    (31) expression -> . expression LEFTSHIFT expression
+    (32) expression -> . expression RIGHTSHIFT expression
+    (33) expression -> . ( expression )
+    (4) ident -> . IDENT
+    (20) constant -> . DIGITS
+
+    (               shift and go to state 26
+    IDENT           shift and go to state 6
+    DIGITS          shift and go to state 25
+
+    constant                       shift and go to state 28
+    ident                          shift and go to state 27
+    expression                     shift and go to state 66
+
+state 50
+
+    (13) statement -> type ident ; .
+
+    }               reduce using rule 13 (statement -> type ident ; .)
+    IF              reduce using rule 13 (statement -> type ident ; .)
+    WHILE           reduce using rule 13 (statement -> type ident ; .)
+    RETURN          reduce using rule 13 (statement -> type ident ; .)
+    IDENT           reduce using rule 13 (statement -> type ident ; .)
+
+
+state 51
+
+    (16) statement -> WHILE ( expression . ) block
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    )               shift and go to state 67
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+    <               shift and go to state 38
+    >               shift and go to state 43
+    &               shift and go to state 47
+    |               shift and go to state 39
+    EQUAL           shift and go to state 45
+    NOTEQUAL        shift and go to state 48
+    LEFTSHIFT       shift and go to state 40
+    RIGHTSHIFT      shift and go to state 41
+
+
+state 52
+
+    (15) statement -> IF ( expression . ) block
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    )               shift and go to state 68
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+    <               shift and go to state 38
+    >               shift and go to state 43
+    &               shift and go to state 47
+    |               shift and go to state 39
+    EQUAL           shift and go to state 45
+    NOTEQUAL        shift and go to state 48
+    LEFTSHIFT       shift and go to state 40
+    RIGHTSHIFT      shift and go to state 41
+
+
+state 53
+
+    (14) statement -> ident = expression . ;
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               shift and go to state 69
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+    <               shift and go to state 38
+    >               shift and go to state 43
+    &               shift and go to state 47
+    |               shift and go to state 39
+    EQUAL           shift and go to state 45
+    NOTEQUAL        shift and go to state 48
+    LEFTSHIFT       shift and go to state 40
+    RIGHTSHIFT      shift and go to state 41
+
+
+state 54
+
+    (33) expression -> ( expression ) .
+
+    ;               reduce using rule 33 (expression -> ( expression ) .)
+    +               reduce using rule 33 (expression -> ( expression ) .)
+    -               reduce using rule 33 (expression -> ( expression ) .)
+    *               reduce using rule 33 (expression -> ( expression ) .)
+    /               reduce using rule 33 (expression -> ( expression ) .)
+    <               reduce using rule 33 (expression -> ( expression ) .)
+    >               reduce using rule 33 (expression -> ( expression ) .)
+    &               reduce using rule 33 (expression -> ( expression ) .)
+    |               reduce using rule 33 (expression -> ( expression ) .)
+    EQUAL           reduce using rule 33 (expression -> ( expression ) .)
+    NOTEQUAL        reduce using rule 33 (expression -> ( expression ) .)
+    LEFTSHIFT       reduce using rule 33 (expression -> ( expression ) .)
+    RIGHTSHIFT      reduce using rule 33 (expression -> ( expression ) .)
+    )               reduce using rule 33 (expression -> ( expression ) .)
+
+
+state 55
+
+    (23) expression -> expression * expression .
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               reduce using rule 23 (expression -> expression * expression .)
+    +               reduce using rule 23 (expression -> expression * expression .)
+    -               reduce using rule 23 (expression -> expression * expression .)
+    *               reduce using rule 23 (expression -> expression * expression .)
+    /               reduce using rule 23 (expression -> expression * expression .)
+    <               reduce using rule 23 (expression -> expression * expression .)
+    >               reduce using rule 23 (expression -> expression * expression .)
+    &               reduce using rule 23 (expression -> expression * expression .)
+    |               reduce using rule 23 (expression -> expression * expression .)
+    EQUAL           reduce using rule 23 (expression -> expression * expression .)
+    NOTEQUAL        reduce using rule 23 (expression -> expression * expression .)
+    LEFTSHIFT       reduce using rule 23 (expression -> expression * expression .)
+    RIGHTSHIFT      reduce using rule 23 (expression -> expression * expression .)
+    )               reduce using rule 23 (expression -> expression * expression .)
+
+  ! +               [ shift and go to state 49 ]
+  ! -               [ shift and go to state 42 ]
+  ! *               [ shift and go to state 37 ]
+  ! /               [ shift and go to state 44 ]
+  ! <               [ shift and go to state 38 ]
+  ! >               [ shift and go to state 43 ]
+  ! &               [ shift and go to state 47 ]
+  ! |               [ shift and go to state 39 ]
+  ! EQUAL           [ shift and go to state 45 ]
+  ! NOTEQUAL        [ shift and go to state 48 ]
+  ! LEFTSHIFT       [ shift and go to state 40 ]
+  ! RIGHTSHIFT      [ shift and go to state 41 ]
+
+
+state 56
+
+    (25) expression -> expression < expression .
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               reduce using rule 25 (expression -> expression < expression .)
+    <               reduce using rule 25 (expression -> expression < expression .)
+    >               reduce using rule 25 (expression -> expression < expression .)
+    &               reduce using rule 25 (expression -> expression < expression .)
+    |               reduce using rule 25 (expression -> expression < expression .)
+    EQUAL           reduce using rule 25 (expression -> expression < expression .)
+    NOTEQUAL        reduce using rule 25 (expression -> expression < expression .)
+    )               reduce using rule 25 (expression -> expression < expression .)
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+    LEFTSHIFT       shift and go to state 40
+    RIGHTSHIFT      shift and go to state 41
+
+  ! +               [ reduce using rule 25 (expression -> expression < expression .) ]
+  ! -               [ reduce using rule 25 (expression -> expression < expression .) ]
+  ! *               [ reduce using rule 25 (expression -> expression < expression .) ]
+  ! /               [ reduce using rule 25 (expression -> expression < expression .) ]
+  ! LEFTSHIFT       [ reduce using rule 25 (expression -> expression < expression .) ]
+  ! RIGHTSHIFT      [ reduce using rule 25 (expression -> expression < expression .) ]
+  ! <               [ shift and go to state 38 ]
+  ! >               [ shift and go to state 43 ]
+  ! &               [ shift and go to state 47 ]
+  ! |               [ shift and go to state 39 ]
+  ! EQUAL           [ shift and go to state 45 ]
+  ! NOTEQUAL        [ shift and go to state 48 ]
+
+
+state 57
+
+    (28) expression -> expression | expression .
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               reduce using rule 28 (expression -> expression | expression .)
+    |               reduce using rule 28 (expression -> expression | expression .)
+    )               reduce using rule 28 (expression -> expression | expression .)
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+    <               shift and go to state 38
+    >               shift and go to state 43
+    &               shift and go to state 47
+    EQUAL           shift and go to state 45
+    NOTEQUAL        shift and go to state 48
+    LEFTSHIFT       shift and go to state 40
+    RIGHTSHIFT      shift and go to state 41
+
+  ! +               [ reduce using rule 28 (expression -> expression | expression .) ]
+  ! -               [ reduce using rule 28 (expression -> expression | expression .) ]
+  ! *               [ reduce using rule 28 (expression -> expression | expression .) ]
+  ! /               [ reduce using rule 28 (expression -> expression | expression .) ]
+  ! <               [ reduce using rule 28 (expression -> expression | expression .) ]
+  ! >               [ reduce using rule 28 (expression -> expression | expression .) ]
+  ! &               [ reduce using rule 28 (expression -> expression | expression .) ]
+  ! EQUAL           [ reduce using rule 28 (expression -> expression | expression .) ]
+  ! NOTEQUAL        [ reduce using rule 28 (expression -> expression | expression .) ]
+  ! LEFTSHIFT       [ reduce using rule 28 (expression -> expression | expression .) ]
+  ! RIGHTSHIFT      [ reduce using rule 28 (expression -> expression | expression .) ]
+  ! |               [ shift and go to state 39 ]
+
+
+state 58
+
+    (31) expression -> expression LEFTSHIFT expression .
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               reduce using rule 31 (expression -> expression LEFTSHIFT expression .)
+    <               reduce using rule 31 (expression -> expression LEFTSHIFT expression .)
+    >               reduce using rule 31 (expression -> expression LEFTSHIFT expression .)
+    &               reduce using rule 31 (expression -> expression LEFTSHIFT expression .)
+    |               reduce using rule 31 (expression -> expression LEFTSHIFT expression .)
+    EQUAL           reduce using rule 31 (expression -> expression LEFTSHIFT expression .)
+    NOTEQUAL        reduce using rule 31 (expression -> expression LEFTSHIFT expression .)
+    LEFTSHIFT       reduce using rule 31 (expression -> expression LEFTSHIFT expression .)
+    RIGHTSHIFT      reduce using rule 31 (expression -> expression LEFTSHIFT expression .)
+    )               reduce using rule 31 (expression -> expression LEFTSHIFT expression .)
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+
+  ! +               [ reduce using rule 31 (expression -> expression LEFTSHIFT expression .) ]
+  ! -               [ reduce using rule 31 (expression -> expression LEFTSHIFT expression .) ]
+  ! *               [ reduce using rule 31 (expression -> expression LEFTSHIFT expression .) ]
+  ! /               [ reduce using rule 31 (expression -> expression LEFTSHIFT expression .) ]
+  ! <               [ shift and go to state 38 ]
+  ! >               [ shift and go to state 43 ]
+  ! &               [ shift and go to state 47 ]
+  ! |               [ shift and go to state 39 ]
+  ! EQUAL           [ shift and go to state 45 ]
+  ! NOTEQUAL        [ shift and go to state 48 ]
+  ! LEFTSHIFT       [ shift and go to state 40 ]
+  ! RIGHTSHIFT      [ shift and go to state 41 ]
+
+
+state 59
+
+    (32) expression -> expression RIGHTSHIFT expression .
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               reduce using rule 32 (expression -> expression RIGHTSHIFT expression .)
+    <               reduce using rule 32 (expression -> expression RIGHTSHIFT expression .)
+    >               reduce using rule 32 (expression -> expression RIGHTSHIFT expression .)
+    &               reduce using rule 32 (expression -> expression RIGHTSHIFT expression .)
+    |               reduce using rule 32 (expression -> expression RIGHTSHIFT expression .)
+    EQUAL           reduce using rule 32 (expression -> expression RIGHTSHIFT expression .)
+    NOTEQUAL        reduce using rule 32 (expression -> expression RIGHTSHIFT expression .)
+    LEFTSHIFT       reduce using rule 32 (expression -> expression RIGHTSHIFT expression .)
+    RIGHTSHIFT      reduce using rule 32 (expression -> expression RIGHTSHIFT expression .)
+    )               reduce using rule 32 (expression -> expression RIGHTSHIFT expression .)
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+
+  ! +               [ reduce using rule 32 (expression -> expression RIGHTSHIFT expression .) ]
+  ! -               [ reduce using rule 32 (expression -> expression RIGHTSHIFT expression .) ]
+  ! *               [ reduce using rule 32 (expression -> expression RIGHTSHIFT expression .) ]
+  ! /               [ reduce using rule 32 (expression -> expression RIGHTSHIFT expression .) ]
+  ! <               [ shift and go to state 38 ]
+  ! >               [ shift and go to state 43 ]
+  ! &               [ shift and go to state 47 ]
+  ! |               [ shift and go to state 39 ]
+  ! EQUAL           [ shift and go to state 45 ]
+  ! NOTEQUAL        [ shift and go to state 48 ]
+  ! LEFTSHIFT       [ shift and go to state 40 ]
+  ! RIGHTSHIFT      [ shift and go to state 41 ]
+
+
+state 60
+
+    (22) expression -> expression - expression .
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               reduce using rule 22 (expression -> expression - expression .)
+    +               reduce using rule 22 (expression -> expression - expression .)
+    -               reduce using rule 22 (expression -> expression - expression .)
+    <               reduce using rule 22 (expression -> expression - expression .)
+    >               reduce using rule 22 (expression -> expression - expression .)
+    &               reduce using rule 22 (expression -> expression - expression .)
+    |               reduce using rule 22 (expression -> expression - expression .)
+    EQUAL           reduce using rule 22 (expression -> expression - expression .)
+    NOTEQUAL        reduce using rule 22 (expression -> expression - expression .)
+    LEFTSHIFT       reduce using rule 22 (expression -> expression - expression .)
+    RIGHTSHIFT      reduce using rule 22 (expression -> expression - expression .)
+    )               reduce using rule 22 (expression -> expression - expression .)
+    *               shift and go to state 37
+    /               shift and go to state 44
+
+  ! *               [ reduce using rule 22 (expression -> expression - expression .) ]
+  ! /               [ reduce using rule 22 (expression -> expression - expression .) ]
+  ! +               [ shift and go to state 49 ]
+  ! -               [ shift and go to state 42 ]
+  ! <               [ shift and go to state 38 ]
+  ! >               [ shift and go to state 43 ]
+  ! &               [ shift and go to state 47 ]
+  ! |               [ shift and go to state 39 ]
+  ! EQUAL           [ shift and go to state 45 ]
+  ! NOTEQUAL        [ shift and go to state 48 ]
+  ! LEFTSHIFT       [ shift and go to state 40 ]
+  ! RIGHTSHIFT      [ shift and go to state 41 ]
+
+
+state 61
+
+    (26) expression -> expression > expression .
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               reduce using rule 26 (expression -> expression > expression .)
+    <               reduce using rule 26 (expression -> expression > expression .)
+    >               reduce using rule 26 (expression -> expression > expression .)
+    &               reduce using rule 26 (expression -> expression > expression .)
+    |               reduce using rule 26 (expression -> expression > expression .)
+    EQUAL           reduce using rule 26 (expression -> expression > expression .)
+    NOTEQUAL        reduce using rule 26 (expression -> expression > expression .)
+    )               reduce using rule 26 (expression -> expression > expression .)
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+    LEFTSHIFT       shift and go to state 40
+    RIGHTSHIFT      shift and go to state 41
+
+  ! +               [ reduce using rule 26 (expression -> expression > expression .) ]
+  ! -               [ reduce using rule 26 (expression -> expression > expression .) ]
+  ! *               [ reduce using rule 26 (expression -> expression > expression .) ]
+  ! /               [ reduce using rule 26 (expression -> expression > expression .) ]
+  ! LEFTSHIFT       [ reduce using rule 26 (expression -> expression > expression .) ]
+  ! RIGHTSHIFT      [ reduce using rule 26 (expression -> expression > expression .) ]
+  ! <               [ shift and go to state 38 ]
+  ! >               [ shift and go to state 43 ]
+  ! &               [ shift and go to state 47 ]
+  ! |               [ shift and go to state 39 ]
+  ! EQUAL           [ shift and go to state 45 ]
+  ! NOTEQUAL        [ shift and go to state 48 ]
+
+
+state 62
+
+    (24) expression -> expression / expression .
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               reduce using rule 24 (expression -> expression / expression .)
+    +               reduce using rule 24 (expression -> expression / expression .)
+    -               reduce using rule 24 (expression -> expression / expression .)
+    *               reduce using rule 24 (expression -> expression / expression .)
+    /               reduce using rule 24 (expression -> expression / expression .)
+    <               reduce using rule 24 (expression -> expression / expression .)
+    >               reduce using rule 24 (expression -> expression / expression .)
+    &               reduce using rule 24 (expression -> expression / expression .)
+    |               reduce using rule 24 (expression -> expression / expression .)
+    EQUAL           reduce using rule 24 (expression -> expression / expression .)
+    NOTEQUAL        reduce using rule 24 (expression -> expression / expression .)
+    LEFTSHIFT       reduce using rule 24 (expression -> expression / expression .)
+    RIGHTSHIFT      reduce using rule 24 (expression -> expression / expression .)
+    )               reduce using rule 24 (expression -> expression / expression .)
+
+  ! +               [ shift and go to state 49 ]
+  ! -               [ shift and go to state 42 ]
+  ! *               [ shift and go to state 37 ]
+  ! /               [ shift and go to state 44 ]
+  ! <               [ shift and go to state 38 ]
+  ! >               [ shift and go to state 43 ]
+  ! &               [ shift and go to state 47 ]
+  ! |               [ shift and go to state 39 ]
+  ! EQUAL           [ shift and go to state 45 ]
+  ! NOTEQUAL        [ shift and go to state 48 ]
+  ! LEFTSHIFT       [ shift and go to state 40 ]
+  ! RIGHTSHIFT      [ shift and go to state 41 ]
+
+
+state 63
+
+    (29) expression -> expression EQUAL expression .
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               reduce using rule 29 (expression -> expression EQUAL expression .)
+    <               reduce using rule 29 (expression -> expression EQUAL expression .)
+    >               reduce using rule 29 (expression -> expression EQUAL expression .)
+    &               reduce using rule 29 (expression -> expression EQUAL expression .)
+    |               reduce using rule 29 (expression -> expression EQUAL expression .)
+    EQUAL           reduce using rule 29 (expression -> expression EQUAL expression .)
+    NOTEQUAL        reduce using rule 29 (expression -> expression EQUAL expression .)
+    )               reduce using rule 29 (expression -> expression EQUAL expression .)
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+    LEFTSHIFT       shift and go to state 40
+    RIGHTSHIFT      shift and go to state 41
+
+  ! +               [ reduce using rule 29 (expression -> expression EQUAL expression .) ]
+  ! -               [ reduce using rule 29 (expression -> expression EQUAL expression .) ]
+  ! *               [ reduce using rule 29 (expression -> expression EQUAL expression .) ]
+  ! /               [ reduce using rule 29 (expression -> expression EQUAL expression .) ]
+  ! LEFTSHIFT       [ reduce using rule 29 (expression -> expression EQUAL expression .) ]
+  ! RIGHTSHIFT      [ reduce using rule 29 (expression -> expression EQUAL expression .) ]
+  ! <               [ shift and go to state 38 ]
+  ! >               [ shift and go to state 43 ]
+  ! &               [ shift and go to state 47 ]
+  ! |               [ shift and go to state 39 ]
+  ! EQUAL           [ shift and go to state 45 ]
+  ! NOTEQUAL        [ shift and go to state 48 ]
+
+
+state 64
+
+    (27) expression -> expression & expression .
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               reduce using rule 27 (expression -> expression & expression .)
+    &               reduce using rule 27 (expression -> expression & expression .)
+    |               reduce using rule 27 (expression -> expression & expression .)
+    )               reduce using rule 27 (expression -> expression & expression .)
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+    <               shift and go to state 38
+    >               shift and go to state 43
+    EQUAL           shift and go to state 45
+    NOTEQUAL        shift and go to state 48
+    LEFTSHIFT       shift and go to state 40
+    RIGHTSHIFT      shift and go to state 41
+
+  ! +               [ reduce using rule 27 (expression -> expression & expression .) ]
+  ! -               [ reduce using rule 27 (expression -> expression & expression .) ]
+  ! *               [ reduce using rule 27 (expression -> expression & expression .) ]
+  ! /               [ reduce using rule 27 (expression -> expression & expression .) ]
+  ! <               [ reduce using rule 27 (expression -> expression & expression .) ]
+  ! >               [ reduce using rule 27 (expression -> expression & expression .) ]
+  ! EQUAL           [ reduce using rule 27 (expression -> expression & expression .) ]
+  ! NOTEQUAL        [ reduce using rule 27 (expression -> expression & expression .) ]
+  ! LEFTSHIFT       [ reduce using rule 27 (expression -> expression & expression .) ]
+  ! RIGHTSHIFT      [ reduce using rule 27 (expression -> expression & expression .) ]
+  ! &               [ shift and go to state 47 ]
+  ! |               [ shift and go to state 39 ]
+
+
+state 65
+
+    (30) expression -> expression NOTEQUAL expression .
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               reduce using rule 30 (expression -> expression NOTEQUAL expression .)
+    <               reduce using rule 30 (expression -> expression NOTEQUAL expression .)
+    >               reduce using rule 30 (expression -> expression NOTEQUAL expression .)
+    &               reduce using rule 30 (expression -> expression NOTEQUAL expression .)
+    |               reduce using rule 30 (expression -> expression NOTEQUAL expression .)
+    EQUAL           reduce using rule 30 (expression -> expression NOTEQUAL expression .)
+    NOTEQUAL        reduce using rule 30 (expression -> expression NOTEQUAL expression .)
+    )               reduce using rule 30 (expression -> expression NOTEQUAL expression .)
+    +               shift and go to state 49
+    -               shift and go to state 42
+    *               shift and go to state 37
+    /               shift and go to state 44
+    LEFTSHIFT       shift and go to state 40
+    RIGHTSHIFT      shift and go to state 41
+
+  ! +               [ reduce using rule 30 (expression -> expression NOTEQUAL expression .) ]
+  ! -               [ reduce using rule 30 (expression -> expression NOTEQUAL expression .) ]
+  ! *               [ reduce using rule 30 (expression -> expression NOTEQUAL expression .) ]
+  ! /               [ reduce using rule 30 (expression -> expression NOTEQUAL expression .) ]
+  ! LEFTSHIFT       [ reduce using rule 30 (expression -> expression NOTEQUAL expression .) ]
+  ! RIGHTSHIFT      [ reduce using rule 30 (expression -> expression NOTEQUAL expression .) ]
+  ! <               [ shift and go to state 38 ]
+  ! >               [ shift and go to state 43 ]
+  ! &               [ shift and go to state 47 ]
+  ! |               [ shift and go to state 39 ]
+  ! EQUAL           [ shift and go to state 45 ]
+  ! NOTEQUAL        [ shift and go to state 48 ]
+
+
+state 66
+
+    (21) expression -> expression + expression .
+    (21) expression -> expression . + expression
+    (22) expression -> expression . - expression
+    (23) expression -> expression . * expression
+    (24) expression -> expression . / expression
+    (25) expression -> expression . < expression
+    (26) expression -> expression . > expression
+    (27) expression -> expression . & expression
+    (28) expression -> expression . | expression
+    (29) expression -> expression . EQUAL expression
+    (30) expression -> expression . NOTEQUAL expression
+    (31) expression -> expression . LEFTSHIFT expression
+    (32) expression -> expression . RIGHTSHIFT expression
+
+    ;               reduce using rule 21 (expression -> expression + expression .)
+    +               reduce using rule 21 (expression -> expression + expression .)
+    -               reduce using rule 21 (expression -> expression + expression .)
+    <               reduce using rule 21 (expression -> expression + expression .)
+    >               reduce using rule 21 (expression -> expression + expression .)
+    &               reduce using rule 21 (expression -> expression + expression .)
+    |               reduce using rule 21 (expression -> expression + expression .)
+    EQUAL           reduce using rule 21 (expression -> expression + expression .)
+    NOTEQUAL        reduce using rule 21 (expression -> expression + expression .)
+    LEFTSHIFT       reduce using rule 21 (expression -> expression + expression .)
+    RIGHTSHIFT      reduce using rule 21 (expression -> expression + expression .)
+    )               reduce using rule 21 (expression -> expression + expression .)
+    *               shift and go to state 37
+    /               shift and go to state 44
+
+  ! *               [ reduce using rule 21 (expression -> expression + expression .) ]
+  ! /               [ reduce using rule 21 (expression -> expression + expression .) ]
+  ! +               [ shift and go to state 49 ]
+  ! -               [ shift and go to state 42 ]
+  ! <               [ shift and go to state 38 ]
+  ! >               [ shift and go to state 43 ]
+  ! &               [ shift and go to state 47 ]
+  ! |               [ shift and go to state 39 ]
+  ! EQUAL           [ shift and go to state 45 ]
+  ! NOTEQUAL        [ shift and go to state 48 ]
+  ! LEFTSHIFT       [ shift and go to state 40 ]
+  ! RIGHTSHIFT      [ shift and go to state 41 ]
+
+
+state 67
+
+    (16) statement -> WHILE ( expression ) . block
+    (9) block -> . { statements }
+
+    {               shift and go to state 15
+
+    block                          shift and go to state 70
+
+state 68
+
+    (15) statement -> IF ( expression ) . block
+    (9) block -> . { statements }
+
+    {               shift and go to state 15
+
+    block                          shift and go to state 71
+
+state 69
+
+    (14) statement -> ident = expression ; .
+
+    }               reduce using rule 14 (statement -> ident = expression ; .)
+    IF              reduce using rule 14 (statement -> ident = expression ; .)
+    WHILE           reduce using rule 14 (statement -> ident = expression ; .)
+    RETURN          reduce using rule 14 (statement -> ident = expression ; .)
+    IDENT           reduce using rule 14 (statement -> ident = expression ; .)
+
+
+state 70
+
+    (16) statement -> WHILE ( expression ) block .
+
+    }               reduce using rule 16 (statement -> WHILE ( expression ) block .)
+    IF              reduce using rule 16 (statement -> WHILE ( expression ) block .)
+    WHILE           reduce using rule 16 (statement -> WHILE ( expression ) block .)
+    RETURN          reduce using rule 16 (statement -> WHILE ( expression ) block .)
+    IDENT           reduce using rule 16 (statement -> WHILE ( expression ) block .)
+
+
+state 71
+
+    (15) statement -> IF ( expression ) block .
+
+    }               reduce using rule 15 (statement -> IF ( expression ) block .)
+    IF              reduce using rule 15 (statement -> IF ( expression ) block .)
+    WHILE           reduce using rule 15 (statement -> IF ( expression ) block .)
+    RETURN          reduce using rule 15 (statement -> IF ( expression ) block .)
+    IDENT           reduce using rule 15 (statement -> IF ( expression ) block .)
 
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
-WARNING: shift/reduce conflict for RETURN in state 16 resolved as shift
+WARNING: shift/reduce conflict for IF in state 15 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 15 resolved as shift
+WARNING: shift/reduce conflict for RETURN in state 15 resolved as shift
+WARNING: shift/reduce conflict for IDENT in state 15 resolved as shift

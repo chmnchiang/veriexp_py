@@ -1,26 +1,41 @@
 import ply.lex as lex
 
-tokens = (
+reserved = (
     'RETURN',
-    'IDENT',
-    'DIGITS'
+    'IF',
+    'WHILE'
 )
 
-literals = ['+', '-', '*', '/', '(', ')', '{', '}', ';', ',']
+tokens = reserved + (
+    'IDENT',
+    'DIGITS',
+    'EQUAL',
+    'NOTEQUAL',
+    'LEFTSHIFT',
+    'RIGHTSHIFT',
+)
+
+# literals = ['+', '-', '*', '/', '(', ')', '{', '}', ';', ',', '<', '>']
+literals = '+-*/(){};,<>=&|'
 
 t_ignore  = ' \t'
 
-def t_RETURN(t):
-    r'return'
-    return t
+t_EQUAL = '=='
+t_NOTEQUAL = '!='
+t_LEFTSHIFT = '<<'
+t_RIGHTSHIFT = '>>'
+
+reserved_map = {}
+for r in reserved:
+    reserved_map[r.lower()] = r
 
 def t_IDENT(t):
     r'[a-zA-Z][a-zA-Z0-9]*'
+    t.type = reserved_map.get(t.value, 'IDENT')
     return t
 
 def t_DIGITS(t):
     r'\d+'
-    t.value = int(t.value)
     return t
 
 def t_newline(t):
@@ -36,7 +51,7 @@ lex.lex()
 
 if __name__ == '__main__':
 
-    with open('test.ver') as f:
+    with open('f.ver') as f:
         lex.input(f.read())
 
         while True:
