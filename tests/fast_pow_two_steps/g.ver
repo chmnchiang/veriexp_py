@@ -1,0 +1,18 @@
+int g(int a, int b, int m) {
+    int temp;
+    temp = 0;
+    while (b) {
+        if (b & 1) {
+            temp = temp + a;
+            if (temp >= m) {
+                temp = temp - m;
+            }
+        }
+        b = b >> 1;
+        a = a + a;
+        if (a >= m) {
+            a = a - m;
+        }
+    }
+    return temp;
+}

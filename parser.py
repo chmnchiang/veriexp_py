@@ -10,7 +10,7 @@ start = 'program'
 precedence = (
     ('left', '|'),
     ('left', '&'),
-    ('left', '<', '>', 'EQUAL', 'NOTEQUAL'),
+    ('left', '<', '>', 'EQUAL', 'NOTEQUAL', 'GREATEREQUAL', 'LESSEQUAL'),
     ('left', 'LEFTSHIFT', 'RIGHTSHIFT'),
     ('left', '+', '-'),
     ('left', '*', '/'),
@@ -22,7 +22,7 @@ def p_program(p):
 
 
 def p_function_declaration(p):
-    '''func_decl : type ident '(' func_args ')' block'''
+    '''func_decl : type ident '(' func_decl_args ')' block'''
     p[0] = FunctionDeclaration(p[2], p[1], p[4], p[6])
 
 
@@ -35,10 +35,10 @@ def p_ident(p):
     '''ident : IDENT'''
     p[0] = Identifier(p[1])
 
-def p_func_args(p):
-    '''func_args : 
-                 | func_arg_decl
-                 | func_args ',' func_arg_decl'''
+def p_func_decl_args(p):
+    '''func_decl_args : 
+                      | func_decl_arg
+                      | func_decl_args ',' func_decl_arg '''
     if len(p) == 1:
         p[0] = []
     elif len(p) == 2:
@@ -47,8 +47,8 @@ def p_func_args(p):
         p[1].append(p[3])
         p[0] = p[1]
 
-def p_func_arg_decl(p):
-    '''func_arg_decl : type ident'''
+def p_func_decl_arg(p):
+    '''func_decl_arg : type ident'''
     p[0] = FuncArgDeclaration(p[1], p[2])
 
 def p_block(p):
@@ -110,10 +110,36 @@ def p_binary_expression(p):
                   | expression '|' expression
                   | expression EQUAL expression
                   | expression NOTEQUAL expression
+                  | expression GREATEREQUAL expression
+                  | expression LESSEQUAL expression
                   | expression LEFTSHIFT expression
                   | expression RIGHTSHIFT expression
                   '''
     p[0] = BinaryOP(p[1], p[2], p[3])
+
+def p_store_function_result(p):
+    '''statement : ident '=' function_call ';' '''
+    p[0] = Assignment(p[1], p[3])
+
+def p_function_call(p):
+    '''function_call : ident '(' func_args ')' '''
+    p[0] = FunctionCall(p[1], p[3])
+
+def p_func_args(p):
+    '''func_args :
+                 | func_arg
+                 | func_args ',' func_arg '''
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[1].append(p[3])
+        p[0] = p[1]
+
+def p_func_arg(p):
+    '''func_arg : ident '=' ident'''
+    p[0] = (p[1], p[3])
 
 def p_parenthesis_expression(p):
     '''expression : '(' expression ')' '''

@@ -4,9 +4,10 @@ from os import listdir
 from os.path import join as pjoin, isdir, isfile
 import subprocess
 from termcolor import colored
+import sys
 
 tests_path = 'tests'
-def run_test(tc):
+def run_test(tc, verbose=False):
     path = pjoin(tests_path, tc)
 
     def file_ends_with(f, s):
@@ -25,6 +26,8 @@ def run_test(tc):
     subprocess.run(['iverilog', '-o', pjoin(path, 'tb'), *verilogs], check=True)
     res = subprocess.run(['vvp', pjoin(path, 'tb')],
                          stdout=subprocess.PIPE, check=True)
+    if verbose:
+        print(res.stdout)
     return 'err' not in res.stdout.decode().lower()
 
 def run_all_test():
@@ -48,4 +51,7 @@ def run_all_test():
 
 
 if __name__ == '__main__':
-    run_all_test()
+    if len(sys.argv) > 1:
+        run_test(sys.argv[1], verbose=True)
+    else:
+        run_all_test()

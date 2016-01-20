@@ -11,6 +11,8 @@ tokens = reserved + (
     'DIGITS',
     'EQUAL',
     'NOTEQUAL',
+    'GREATEREQUAL',
+    'LESSEQUAL',
     'LEFTSHIFT',
     'RIGHTSHIFT',
 )
@@ -22,6 +24,8 @@ t_ignore  = ' \t'
 
 t_EQUAL = '=='
 t_NOTEQUAL = '!='
+t_GREATEREQUAL = '>='
+t_LESSEQUAL = '<='
 t_LEFTSHIFT = '<<'
 t_RIGHTSHIFT = '>>'
 

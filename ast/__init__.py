@@ -10,3 +10,4 @@ from .statement.block import Block
 from .statement.if_statement import IfStatement
 from .statement.while_statement import WhileStatement
 from .statement.assignment import Assignment
+from .statement.function_call import FunctionCall

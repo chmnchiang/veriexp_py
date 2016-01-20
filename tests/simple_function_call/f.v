@@ -9,8 +9,20 @@ input wire [31:0] b;
  reg [31:0] _b;
 output reg [31:0] result;
 output reg done;
- reg [31:0] t;
- reg [31:0] res;
+ reg [31:0] c;
+ reg _T0;
+ wire [31:0] _T1;
+ wire _T2;
+ reg [31:0] _T3;
+g _T4(
+.start(_T0),
+.clk(clk),
+.b(_b),
+.reset(reset),
+.done(_T2),
+.result(_T1),
+.a(_a)
+);
 always @(posedge clk) begin
 if (reset) begin
 state <= 0;
@@ -18,8 +30,9 @@ _a <= 0;
 _b <= 0;
 result <= 0;
 done <= 0;
-t <= 0;
-res <= 0;
+c <= 0;
+_T0 <= 0;
+_T3 <= 0;
 end else begin
 case(state)
 0: begin
@@ -28,32 +41,28 @@ end
 1: begin
 _a <= a;
 _b <= b;
-state <= 4;
+state <= 5;
 done <= 0;
 end
 4: begin
-t <= _b;
-state <= 5;
-end
-5: begin
-res <= 0;
-state <= 6;
-end
-6: begin
-state <= ((t) != (0)) ? (8) : (7);
-end
-7: begin
-result <= res;
+result <= c;
 done <= 1;
 state <= 0;
 end
-8: begin
-res <= (res) + (_a);
-state <= 9;
-end
-9: begin
-t <= (t) - (1);
+5: begin
+_T0 <= 1;
 state <= 6;
+end
+6: begin
+state <= (_T2) ? (7) : (6);
+end
+7: begin
+_T3 <= _T1;
+state <= 8;
+end
+8: begin
+c <= _T1;
+state <= 4;
 end
 endcase
 end

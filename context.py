@@ -4,6 +4,7 @@ from verilog.variable import (Variable,
                               RegVariable, 
                               StateVariable)
 from verilog.statement import Statement, StoreReg
+from verilog.submodule import Submodule
 
 class Context:
     def __init__(self):
@@ -12,6 +13,7 @@ class Context:
         self.states = []
         self.idle_state = None
         self.start_state = None
+        self.temp_var_cnt = 0
 
         self.special_var = {}
 
@@ -38,6 +40,12 @@ class Context:
 
     def add_var(self, name, length):
         var = RegVariable(name=name, length=length, io_type=IOType.normal)
+        self.module.vars.append(var)
+        self.regist_name(name, var)
+        return var
+
+    def add_wire(self, name, length):
+        var = WireVariable(name=name, length=length, io_type=IOType.normal)
         self.module.vars.append(var)
         self.regist_name(name, var)
         return var
@@ -81,11 +89,27 @@ class Context:
             StoreReg(self.ident_map['state'], next_state)
         )
 
+    def add_submodule(self, name, bundle):
+        self.module.submodules.append(Submodule(name, bundle))
+
     def A(self, statement):
         self.add_statement(self.cur_state, statement)
 
     def N(self, next_state):
         self.set_next_state(self.cur_state, next_state)
+
+    def get_temp_var_name(self):
+        s = "_T%d" % self.temp_var_cnt
+        self.temp_var_cnt += 1
+        return s
+
+    def create_temp_var(self, length):
+        name = self.get_temp_var_name()
+        return self.add_var(name, length)
+
+    def create_temp_wire(self, length):
+        name = self.get_temp_var_name()
+        return self.add_wire(name, length)
 
     @property
     def cur_state(self):
@@ -100,6 +124,11 @@ class Context:
 
     def pop_state(self):
         return self.stack.pop()
+
+    def insert_state(self):
+        o_s = self.cur_state
+        self.stack[-1] = (self.new_state(), self.stack[-1][1])
+        return o_s
 
 
 

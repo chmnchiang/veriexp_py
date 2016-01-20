@@ -10,7 +10,13 @@ input wire [31:0] b;
 output reg [31:0] result;
 output reg done;
 always @(posedge clk) begin
-if (reset) state <= 0; else begin
+if (reset) begin
+state <= 0;
+_a <= 0;
+_b <= 0;
+result <= 0;
+done <= 0;
+end else begin
 case(state)
 0: begin
 state <= (start) ? (1) : (0);

@@ -1,0 +1,12 @@
+int f(int a, int b, int m) {
+    int temp;
+    temp = 1;
+    while (b) {
+        if (b & 1) {
+            temp = g(a=a, b=temp, m=m);
+        }
+        b = b >> 1;
+        a = g(a=a, b=a, m=m);
+    }
+    return temp;
+}
