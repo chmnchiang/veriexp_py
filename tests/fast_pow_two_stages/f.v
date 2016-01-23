@@ -21,24 +21,24 @@ input wire [31:0] m;
  wire _T6;
  reg [31:0] _T7;
 g _T8(
-.clk(clk),
+.done(_T2),
 .b(temp),
-.reset(reset),
-.m(_m),
-.start(_T0),
-.result(_T1),
 .a(_a),
-.done(_T2)
+.start(_T0),
+.clk(clk),
+.result(_T1),
+.reset(reset),
+.m(_m)
 );
 g _T9(
-.clk(clk),
+.done(_T6),
 .b(_a),
-.reset(reset),
-.m(_m),
-.start(_T4),
-.result(_T5),
 .a(_a),
-.done(_T6)
+.start(_T4),
+.clk(clk),
+.result(_T5),
+.reset(reset),
+.m(_m)
 );
 always @(posedge clk) begin
 if (reset) begin

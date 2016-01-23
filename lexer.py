@@ -3,11 +3,14 @@ import ply.lex as lex
 reserved = (
     'RETURN',
     'IF',
+    'ELSE',
     'WHILE',
     'INT',
     'LONG',
     'BOOL',
     'BITS',
+    'ASYNC',
+    'AWAIT',
 )
 
 tokens = reserved + (
@@ -24,10 +27,12 @@ tokens = reserved + (
     'MINUSEQUAL',
     'LEFTSHIFTEQUAL',
     'RIGHTSHIFTEQUAL',
+    'OPAND',
+    'OPOR',
 )
 
 # literals = ['+', '-', '*', '/', '(', ')', '{', '}', ';', ',', '<', '>']
-literals = '+-*/()[]{};,<>=&|'
+literals = '+-*/()[]{};,<>=&|!'
 
 t_ignore  = ' \t'
 
@@ -37,6 +42,8 @@ t_GREATEREQUAL = '>='
 t_LESSEQUAL = '<='
 t_LEFTSHIFT = '<<'
 t_RIGHTSHIFT = '>>'
+t_OPAND = '&&'
+t_OPOR = '\|\|'
 t_MAPSTO = '->'
 
 t_PLUSEQUAL = '\+='

@@ -1,6 +1,7 @@
 from .expression.type import Type
 from .expression.identifier import Identifier
 from .expression.binary_op import BinaryOP
+from .expression.unitary_op import UnitaryOP
 from .expression.constant import Constant
 from .statement.declaration import Declaration
 from .statement.funcarg_declaration import FuncArgDeclaration
@@ -10,4 +11,6 @@ from .statement.block import Block
 from .statement.if_statement import IfStatement
 from .statement.while_statement import WhileStatement
 from .statement.assignment import Assignment
+from .statement.many_assignment import ManyAssignment
 from .statement.function_call import FunctionCall
+from .statement.async_function_call import AsyncFunctionCall

@@ -10,6 +10,8 @@ start = 'program'
 precedence = (
     ('left', '|'),
     ('left', '&'),
+    ('left', 'OPOR'),
+    ('left', 'OPAND'),
     ('left', '<', '>', 'EQUAL', 'NOTEQUAL', 'GREATEREQUAL', 'LESSEQUAL'),
     ('left', 'LEFTSHIFT', 'RIGHTSHIFT'),
     ('left', '+', '-'),
@@ -42,6 +44,7 @@ def p_type(p):
     elif t == 'bits':
         p[0] = Type(int(p[3]))
     else:
+        print(t)
         raise NotImplementedError
 
 
@@ -100,9 +103,39 @@ def p_assignment(p):
     '''statement : ident '=' expression ';' '''
     p[0] = Assignment(p[1], p[3])
 
+def p_many_assignment(p):
+    '''statement : ident_list '=' expression_list ';' '''
+    p[0] = ManyAssignment(p[1], p[3])
+
+def p_ident_list(p):
+    '''ident_list : ident
+                  | ident_list ',' ident '''
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[1].append(p[3])
+        p[0] = p[1]
+
+def p_expression_list(p):
+    '''expression_list : expression
+                       | expression_list ',' expression '''
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[1].append(p[3])
+        p[0] = p[1]
+
 def p_if_statement(p):
     '''statement : IF '(' expression ')' block '''
     p[0] = IfStatement(p[3], p[5])
+
+def p_if_else_statement(p):
+    '''statement : IF '(' expression ')' block ELSE block '''
+    p[0] = IfStatement(p[3], p[5], p[7])
 
 def p_while_statement(p):
     '''statement : WHILE '(' expression ')' block '''
@@ -124,6 +157,10 @@ def p_numerical_constant(p):
     '''constant : DIGITS '''
     p[0] = Constant(p[1])
 
+def p_unitary_expression(p):
+    '''expression : '!' expression '''
+    p[0] = UnitaryOP(p[1], p[2])
+
 def p_binary_expression(p):
     '''expression : expression '+' expression
                   | expression '-' expression
@@ -133,6 +170,8 @@ def p_binary_expression(p):
                   | expression '>' expression
                   | expression '&' expression
                   | expression '|' expression
+                  | expression OPAND expression
+                  | expression OPOR expression
                   | expression EQUAL expression
                   | expression NOTEQUAL expression
                   | expression GREATEREQUAL expression
@@ -159,6 +198,16 @@ def p_function_call(p):
     '''expression : ident '(' func_args ')' MAPSTO type'''
     p[0] = FunctionCall(p[1], p[3], p[6])
 
+def p_async_function_call(p):
+    '''statement : ASYNC ident ',' ident '=' ident '(' func_args ')' MAPSTO type ';' '''
+    p[0] = AsyncFunctionCall(p[6], p[8], p[11], p[2], p[4])
+
+def p_await_statement(p):
+    '''statement : AWAIT expression ';' '''
+    p[0] = WhileStatement(
+        UnitaryOP('!', p[2]), Block([])
+    )
+
 def p_func_args(p):
     '''func_args :
                  | func_arg
@@ -172,7 +221,7 @@ def p_func_args(p):
         p[0] = p[1]
 
 def p_func_arg(p):
-    '''func_arg : ident '=' ident'''
+    '''func_arg : ident '=' expression'''
     p[0] = (p[1], p[3])
 
 def p_parenthesis_expression(p):

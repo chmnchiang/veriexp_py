@@ -1,5 +1,9 @@
 int f(int a, int b) {
-    int c = a;
-    c += b;
-    return c;
+    if (a > b) {
+        return a;
+    } else if (a < b) {
+        return b;
+    } else {
+        return 0;
+    }
 }

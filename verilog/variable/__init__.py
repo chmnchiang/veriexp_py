@@ -5,4 +5,5 @@ from .wire_variable import WireVariable
 from .mux import Mux
 from .state_variable import StateVariable
 from .binary_op import BinaryOP
+from .unitary_op import UnitaryOP
 from .const_value import ConstValue

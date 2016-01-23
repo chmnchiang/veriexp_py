@@ -14,32 +14,31 @@ input wire [259:0] m;
  reg [259:0] temp;
  reg [31:0] counter;
  reg _T0;
- wire [259:0] _T1;
- wire _T2;
- reg [259:0] _T3;
- reg _T4;
- wire [259:0] _T5;
- wire _T6;
- reg [259:0] _T7;
-g _T8(
-.reset(reset),
-.result(_T1),
-.m(_m),
-.a(_a),
-.b(temp),
-.done(_T2),
+ wire gdone;
+ wire [259:0] gres;
+ reg _T1;
+ wire [259:0] _T2;
+ wire _T3;
+ reg [259:0] _T4;
+g _T5(
+.clk(clk),
 .start(_T0),
-.clk(clk)
-);
-g _T9(
+.done(gdone),
 .reset(reset),
-.result(_T5),
+.result(gres),
+.b(temp),
 .m(_m),
-.a(_a),
+.a(_a)
+);
+g _T6(
+.clk(clk),
+.start(_T1),
+.done(_T3),
+.reset(reset),
+.result(_T2),
 .b(_a),
-.done(_T6),
-.start(_T4),
-.clk(clk)
+.m(_m),
+.a(_a)
 );
 always @(posedge clk) begin
 if (reset) begin
@@ -52,9 +51,8 @@ _m <= 0;
 temp <= 0;
 counter <= 0;
 _T0 <= 0;
-_T3 <= 0;
+_T1 <= 0;
 _T4 <= 0;
-_T7 <= 0;
 end else begin
 case(state)
 0: begin
@@ -102,49 +100,48 @@ done <= 1;
 state <= 0;
 end
 17: begin
-state <= ((_b) & (1)) ? (21) : (18);
+state <= ((_b) & (1)) ? (19) : (23);
 end
-18: begin
-_b <= (_b) >> (1);
-state <= 28;
+19: begin
+_T0 <= 1;
+state <= 21;
 end
 21: begin
-_T0 <= 1;
-state <= 22;
-end
-22: begin
 _T0 <= 0;
 state <= 23;
 end
+22: begin
+state <= ((_b) & (1)) ? (29) : (28);
+end
 23: begin
-state <= (_T2) ? (24) : (23);
+_T1 <= 1;
+state <= 24;
 end
 24: begin
-_T3 <= _T1;
+_T1 <= 0;
 state <= 25;
 end
 25: begin
-temp <= _T3;
-state <= 18;
+state <= (_T3) ? (26) : (25);
+end
+26: begin
+_T4 <= _T2;
+state <= 27;
+end
+27: begin
+_a <= _T4;
+state <= 22;
 end
 28: begin
-_T4 <= 1;
-state <= 29;
+_b <= (_b) >> (1);
+state <= 9;
 end
 29: begin
-_T4 <= 0;
-state <= 30;
+state <= (!(gdone)) ? (29) : (30);
 end
 30: begin
-state <= (_T6) ? (31) : (30);
-end
-31: begin
-_T7 <= _T5;
-state <= 32;
-end
-32: begin
-_a <= _T7;
-state <= 9;
+temp <= gres;
+state <= 28;
 end
 endcase
 end

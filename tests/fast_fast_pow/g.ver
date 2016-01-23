@@ -1,0 +1,13 @@
+bits[260] g(bits[260] a, bits[260] b, bits[260] m) {
+    bits[260] temp = 0;
+    int counter = 256;
+    while (counter) {
+        if (b & 1) temp += a;
+        if (temp & 1) temp += m;
+
+        temp, b, counter =  temp >> 1, b >> 1, counter - 1;
+    }
+    if (temp >= m) temp -= m;
+
+    return temp;
+}

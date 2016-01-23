@@ -1,0 +1,8 @@
+int f(int a, int b) {
+    async d1, r1 = g(a=a, b=a) -> int;
+    async d2, r2 = g(a=a, b=b) -> int;
+    async d3, r3 = g(a=b, b=b) -> int;
+    await (d1 && d2 && d3);
+    int res = r1 + 2 * r2 + r3;
+    return res;
+}
