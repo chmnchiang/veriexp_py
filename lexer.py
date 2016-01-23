@@ -3,7 +3,11 @@ import ply.lex as lex
 reserved = (
     'RETURN',
     'IF',
-    'WHILE'
+    'WHILE',
+    'INT',
+    'LONG',
+    'BOOL',
+    'BITS',
 )
 
 tokens = reserved + (
@@ -15,10 +19,15 @@ tokens = reserved + (
     'LESSEQUAL',
     'LEFTSHIFT',
     'RIGHTSHIFT',
+    'MAPSTO',
+    'PLUSEQUAL',
+    'MINUSEQUAL',
+    'LEFTSHIFTEQUAL',
+    'RIGHTSHIFTEQUAL',
 )
 
 # literals = ['+', '-', '*', '/', '(', ')', '{', '}', ';', ',', '<', '>']
-literals = '+-*/(){};,<>=&|'
+literals = '+-*/()[]{};,<>=&|'
 
 t_ignore  = ' \t'
 
@@ -28,6 +37,12 @@ t_GREATEREQUAL = '>='
 t_LESSEQUAL = '<='
 t_LEFTSHIFT = '<<'
 t_RIGHTSHIFT = '>>'
+t_MAPSTO = '->'
+
+t_PLUSEQUAL = '\+='
+t_MINUSEQUAL = '-='
+t_LEFTSHIFTEQUAL = '<<='
+t_RIGHTSHIFTEQUAL = '>>='
 
 reserved_map = {}
 for r in reserved:

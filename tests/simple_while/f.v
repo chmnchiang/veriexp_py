@@ -1,35 +1,35 @@
-module f(clk, reset, start, a, b, result, done);
+module f(clk, reset, start, result, done, a, b);
  reg [31:0] state;
 input wire clk;
 input wire reset;
 input wire start;
+output reg [31:0] result;
+output reg done;
 input wire [31:0] a;
  reg [31:0] _a;
 input wire [31:0] b;
  reg [31:0] _b;
-output reg [31:0] result;
-output reg done;
  reg [31:0] t;
  reg [31:0] res;
 always @(posedge clk) begin
 if (reset) begin
 state <= 0;
-_a <= 0;
-_b <= 0;
 result <= 0;
 done <= 0;
+_a <= 0;
+_b <= 0;
 t <= 0;
 res <= 0;
 end else begin
 case(state)
 0: begin
 state <= (start) ? (1) : (0);
+done <= (start) ? (0) : (1);
 end
 1: begin
 _a <= a;
 _b <= b;
 state <= 4;
-done <= 0;
 end
 4: begin
 t <= _b;

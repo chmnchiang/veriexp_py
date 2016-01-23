@@ -3,22 +3,24 @@ from verilog.variable import StateVariable, ConstValue, Mux
 from verilog.statement import StoreReg
 
 class FunctionCall(Statement):
-    def __init__(self, func_name, args):
+    def __init__(self, func_name, args, return_type):
         self.func_name = func_name
         self.args = args
+        self.return_type = return_type
 
     def generate(self, context):
         self.args_var = [(str(a[0]), a[1].generate(context)) for a in self.args]
+        ret_len = self.return_type.length()
 
         clk, reset, start, result, done = (
             context.ident_map['clk'],
             context.ident_map['reset'],
             context.create_temp_var(1),
-            context.create_temp_wire(32),
+            context.create_temp_wire(ret_len),
             context.create_temp_wire(1)
         )
 
-        res_var = context.create_temp_var(32)
+        res_var = context.create_temp_var(ret_len)
 
         bundle = {
             'clk': clk,

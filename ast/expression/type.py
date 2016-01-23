@@ -1,11 +1,10 @@
 from .expression import Expression
 
 class Type(Expression):
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, length):
+        self._length = length
 
     def length(self):
-        if self.name == 'int':
-            return 32
+        return self._length
 
-        raise NotImplementedError
+        # raise NotImplementedError

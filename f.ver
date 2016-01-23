@@ -1,5 +1,5 @@
 int f(int a, int b) {
-    int c;
-    c = g(a=a, b=b);
+    int c = a;
+    c += b;
     return c;
 }

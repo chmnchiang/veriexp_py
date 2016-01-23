@@ -1,0 +1,17 @@
+bits[260] g(bits[260] a, bits[260] b, bits[260] m) {
+    bits[260] temp = 0;
+    while (b) {
+        if (b & 1) {
+            temp = temp + a;
+            if (temp >= m) {
+                temp = temp - m;
+            }
+        }
+        b = b >> 1;
+        a = a << 1;
+        if (a >= m) {
+            a = a - m;
+        }
+    }
+    return temp;
+}

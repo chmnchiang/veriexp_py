@@ -3,10 +3,10 @@ int f(int a, int b, int m) {
     temp = 1;
     while (b) {
         if (b & 1) {
-            temp = g(a=a, b=temp, m=m);
+            temp = g(a=a, b=temp, m=m) -> int;
         }
         b = b >> 1;
-        a = g(a=a, b=a, m=m);
+        a = g(a=a, b=a, m=m) -> int;
     }
     return temp;
 }

@@ -1,0 +1,18 @@
+bits[260] f(bits[260] a, bits[260] b, bits[260] m) {
+    bits[260] temp = 1;
+
+    int counter = 256;
+    while (counter) {
+        a <<= 1;
+        if (a >= m) a -= m;
+        counter -= 1;
+    }
+
+    while (b) {
+        if (b & 1) temp = g(a=a, b=temp, m=m) -> bits[260];
+        
+        b >>= 1;
+        a = g(a=a, b=a, m=m) -> bits[260];
+    }
+    return temp;
+}

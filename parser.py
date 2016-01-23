@@ -27,8 +27,22 @@ def p_function_declaration(p):
 
 
 def p_type(p):
-    '''type : IDENT'''
-    p[0] = Type(p[1])
+    '''type : IDENT
+            | INT
+            | LONG
+            | BOOL
+            | BITS '[' DIGITS ']' '''
+    t = p[1]
+    if t == 'int':
+        p[0] = Type(32)
+    elif t == 'long':
+        p[0] = Type(64)
+    elif t == 'bool':
+        p[0] = Type(1)
+    elif t == 'bits':
+        p[0] = Type(int(p[3]))
+    else:
+        raise NotImplementedError
 
 
 def p_ident(p):
@@ -52,8 +66,12 @@ def p_func_decl_arg(p):
     p[0] = FuncArgDeclaration(p[1], p[2])
 
 def p_block(p):
-    '''block : '{' statements '}' '''
-    p[0] = Block(p[2])
+    '''block : '{' statements '}' 
+             | statement '''
+    if len(p) == 2:
+        p[0] = Block([ p[1] ])
+    else:
+        p[0] = Block(p[2])
 
 def p_statements(p):
     '''statements :
@@ -70,6 +88,13 @@ def p_statements(p):
 def p_declaration(p):
     '''statement : type ident ';' '''
     p[0] = Declaration(typ=p[1], name=p[2])
+
+def p_declare_and_assign(p):
+    '''statement : type ident '=' expression ';' '''
+    p[0] = Block([
+        Declaration(typ=p[1], name=p[2]),
+        Assignment(p[2], p[4]),
+    ])
 
 def p_assignment(p):
     '''statement : ident '=' expression ';' '''
@@ -117,13 +142,22 @@ def p_binary_expression(p):
                   '''
     p[0] = BinaryOP(p[1], p[2], p[3])
 
-def p_store_function_result(p):
-    '''statement : ident '=' function_call ';' '''
-    p[0] = Assignment(p[1], p[3])
+def p_op_assignment(p):
+    '''statement : ident PLUSEQUAL expression ';'
+                 | ident MINUSEQUAL expression ';'
+                 | ident LEFTSHIFTEQUAL expression ';'
+                 | ident RIGHTSHIFTEQUAL expression ';'
+                 '''
+    assert p[2][-1] == '='
+    p[0] = Assignment(p[1], BinaryOP(p[1], p[2][:-1], p[3]))
+
+# def p_store_function_result(p):
+    # '''statement : ident '=' function_call ';' '''
+    # p[0] = Assignment(p[1], p[3])
 
 def p_function_call(p):
-    '''function_call : ident '(' func_args ')' '''
-    p[0] = FunctionCall(p[1], p[3])
+    '''expression : ident '(' func_args ')' MAPSTO type'''
+    p[0] = FunctionCall(p[1], p[3], p[6])
 
 def p_func_args(p):
     '''func_args :

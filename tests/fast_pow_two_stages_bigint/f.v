@@ -3,42 +3,42 @@ module f(clk, reset, start, result, done, a, b, m);
 input wire clk;
 input wire reset;
 input wire start;
-output reg [31:0] result;
+output reg [259:0] result;
 output reg done;
-input wire [31:0] a;
- reg [31:0] _a;
-input wire [31:0] b;
- reg [31:0] _b;
-input wire [31:0] m;
- reg [31:0] _m;
- reg [31:0] temp;
+input wire [259:0] a;
+ reg [259:0] _a;
+input wire [259:0] b;
+ reg [259:0] _b;
+input wire [259:0] m;
+ reg [259:0] _m;
+ reg [259:0] temp;
  reg _T0;
- wire [31:0] _T1;
+ wire [259:0] _T1;
  wire _T2;
- reg [31:0] _T3;
+ reg [259:0] _T3;
  reg _T4;
- wire [31:0] _T5;
+ wire [259:0] _T5;
  wire _T6;
- reg [31:0] _T7;
+ reg [259:0] _T7;
 g _T8(
-.reset(reset),
-.clk(clk),
-.a(_a),
 .done(_T2),
-.m(_m),
-.start(_T0),
 .result(_T1),
-.b(temp)
+.clk(clk),
+.reset(reset),
+.b(temp),
+.start(_T0),
+.a(_a),
+.m(_m)
 );
 g _T9(
-.reset(reset),
-.clk(clk),
-.a(_a),
 .done(_T6),
-.m(_m),
-.start(_T4),
 .result(_T5),
-.b(_a)
+.clk(clk),
+.reset(reset),
+.b(_a),
+.start(_T4),
+.a(_a),
+.m(_m)
 );
 always @(posedge clk) begin
 if (reset) begin
@@ -63,64 +63,64 @@ end
 _a <= a;
 _b <= b;
 _m <= m;
-state <= 3;
-end
-3: begin
-temp <= 1;
 state <= 4;
 end
-4: begin
-state <= (_b) ? (6) : (5);
+3: begin
+state <= (_b) ? (7) : (6);
 end
-5: begin
+4: begin
+temp <= 1;
+state <= 3;
+end
+6: begin
 result <= temp;
 done <= 1;
 state <= 0;
 end
-6: begin
-state <= ((_b) & (1)) ? (10) : (7);
-end
 7: begin
-_b <= (_b) >> (1);
-state <= 17;
+state <= ((_b) & (1)) ? (11) : (8);
 end
-10: begin
-_T0 <= 1;
-state <= 11;
+8: begin
+_b <= (_b) >> (1);
+state <= 18;
 end
 11: begin
-_T0 <= 0;
+_T0 <= 1;
 state <= 12;
 end
 12: begin
-state <= (_T2) ? (13) : (12);
+_T0 <= 0;
+state <= 13;
 end
 13: begin
-_T3 <= _T1;
-state <= 14;
+state <= (_T2) ? (14) : (13);
 end
 14: begin
-temp <= _T3;
-state <= 7;
+_T3 <= _T1;
+state <= 15;
 end
-17: begin
-_T4 <= 1;
-state <= 18;
+15: begin
+temp <= _T3;
+state <= 8;
 end
 18: begin
-_T4 <= 0;
+_T4 <= 1;
 state <= 19;
 end
 19: begin
-state <= (_T6) ? (20) : (19);
+_T4 <= 0;
+state <= 20;
 end
 20: begin
-_T7 <= _T5;
-state <= 21;
+state <= (_T6) ? (21) : (20);
 end
 21: begin
+_T7 <= _T5;
+state <= 22;
+end
+22: begin
 _a <= _T7;
-state <= 4;
+state <= 3;
 end
 endcase
 end
